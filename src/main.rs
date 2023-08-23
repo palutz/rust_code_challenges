@@ -1,3 +1,4 @@
+mod leetcode;
 mod median;
 
 fn main() {
