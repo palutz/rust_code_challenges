@@ -1,6 +1,5 @@
+#[allow(dead_code)]
 mod linkedin {
-    use std::fmt::Debug;
-
     fn median(mut numbers: Vec<f32>) -> Option<f32> { 
         let l = numbers.len();
 
@@ -56,12 +55,21 @@ mod linkedin {
         println!("{}", t.as_ref());
     }
 
-    fn sort_usernames(mut users: Vec<&str>) -> Vec<&str> {
-        todo!()
+    // Sort usernames. It should sorted in place
+    fn sort_usernames<T: AsRef<str> + Ord>(users: &mut Vec<T>) {
+        users.sort_by(|a, b| a.as_ref().to_lowercase().cmp(&b.as_ref().to_lowercase()));
     }
+
+    fn sort_usernames2<T: AsRef<str> + Ord>(users: &mut Vec<T>) {
+        users.sort_by_cached_key(|x| x.as_ref().to_lowercase());
+    }
+
 
     #[cfg(test)]
     mod test_linkedin {
+        use crate::median::linkedin::sort_usernames;
+        use crate::median::linkedin::sort_usernames2;
+
         use super::median;
         #[test]
         fn test_median() {
@@ -77,6 +85,14 @@ mod linkedin {
             assert_eq!(v1, unique(&v1));
 
             assert_eq!(vec!(1,3), unique(&vec![1,1,3]));
+        }
+        #[test]
+        fn test_usernames() {
+            let mut users = vec!("Todd", "amy", "mike99", "Jennifer", "alison");
+            let sorted = vec!("alison", "amy", "Jennifer", "mike99","Todd");
+            //sort_usernames(&mut users);
+            sort_usernames2(&mut users);
+            assert_eq!(sorted, users);
         }
     }
 }
